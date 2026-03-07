@@ -67,7 +67,7 @@ function App() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex gap-3 overflow-x-auto pb-2">
               <FileUpload onChange={handleFileUpload} accept=".json,.toml" buttonText="导入配置" />
               <Button onClick={handleExport} variant="secondary">
                 导出配置
