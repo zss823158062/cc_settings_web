@@ -7,6 +7,7 @@ import { z } from 'zod';
 export const claudeSchema = z.object({
   cleanupPeriodDays: z.number().int().positive().optional(),
   env: z.record(z.string()).optional(),
+  env_array: z.array(z.object({ key: z.string(), value: z.string() })).optional(),
   attribution: z
     .object({
       commit: z.string().optional(),

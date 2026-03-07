@@ -41,7 +41,22 @@ const defaultClaudeValues: ClaudeConfig = {
 export const ClaudeForm: React.FC<ClaudeFormProps> = ({
   onChange,
   onSubmit,
+  defaultValues,
 }) => {
+  // 将 env 对象转换为 env_array 数组用于表单
+  const transformDefaultValues = (values: Partial<ClaudeConfig>) => {
+    const transformed: any = { ...defaultClaudeValues, ...values };
+    if (transformed.env && typeof transformed.env === 'object') {
+      transformed.env_array = Object.entries(transformed.env).map(([key, value]) => ({
+        key,
+        value: String(value),
+      }));
+    } else {
+      transformed.env_array = [];
+    }
+    return transformed;
+  };
+
   const {
     register,
     handleSubmit,
@@ -51,7 +66,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
     reset,
   } = useForm<ClaudeFormData>({
     resolver: zodResolver(claudeSchema),
-    defaultValues: defaultClaudeValues,
+    defaultValues: transformDefaultValues(defaultValues || {}),
     mode: 'onChange',
   });
 
@@ -59,7 +74,18 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
   React.useEffect(() => {
     const subscription = watch((value) => {
       if (onChange && value) {
-        onChange(value as ClaudeConfig);
+        // 将 env_array 转换为 env 对象
+        const transformedValue = { ...value };
+        if (transformedValue.env_array && Array.isArray(transformedValue.env_array)) {
+          transformedValue.env = transformedValue.env_array.reduce((acc: Record<string, string>, item: any) => {
+            if (item.key && item.value !== undefined) {
+              acc[item.key] = item.value;
+            }
+            return acc;
+          }, {});
+          delete transformedValue.env_array;
+        }
+        onChange(transformedValue as ClaudeConfig);
       }
     });
     return () => subscription.unsubscribe();
