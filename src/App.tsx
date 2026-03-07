@@ -4,7 +4,6 @@ import { Footer } from './components/layout/Footer';
 import { Tabs } from './components/common/Tabs';
 import { Button } from './components/common/Button';
 import { FileUpload } from './components/common/FileUpload';
-import { ResetButton } from './components/common/ResetButton';
 import { ConfigPreview } from './components/preview/ConfigPreview';
 import { CodexForm } from './components/forms/CodexForm';
 import { ClaudeForm } from './components/forms/ClaudeForm';
@@ -56,7 +55,7 @@ function App() {
         isDarkMode={isDarkMode}
       />
 
-      <main className="flex-1 container mx-auto px-4 py-8">
+      <main className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-6">
           <Tabs
             tabs={TOOL_TABS}
@@ -65,35 +64,40 @@ function App() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="flex gap-3 overflow-x-auto pb-2">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="lg:col-span-3 space-y-4">
+            <div className="flex gap-2 overflow-x-auto pb-2">
               <FileUpload onChange={handleFileUpload} accept=".json,.toml" buttonText="导入配置" />
-              <Button onClick={handleExport} variant="secondary">
+              <Button onClick={handleExport} variant="secondary" className="whitespace-nowrap">
                 导出配置
               </Button>
-              <Button onClick={() => setShowTemplates(!showTemplates)} variant="secondary">
-                应用模板
+              <Button onClick={() => setShowTemplates(!showTemplates)} variant="secondary" className="whitespace-nowrap">
+                {showTemplates ? '隐藏模板' : '应用模板'}
               </Button>
-              <ResetButton onReset={handleReset} />
+              <Button onClick={handleReset} variant="danger" className="whitespace-nowrap">
+                重置配置
+              </Button>
             </div>
 
             {showTemplates && (
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  选择模板
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 p-5 rounded-lg shadow-sm border border-blue-100 dark:border-gray-700">
+                <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-3 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                  </svg>
+                  选择配置模板
                 </h3>
-                <div className="space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {templates.map((template) => (
                     <button
                       key={template.id}
                       onClick={() => handleTemplateSelect(template.id)}
-                      className="w-full text-left p-3 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="text-left p-4 rounded-lg border-2 border-transparent bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition-all duration-200 group"
                     >
-                      <div className="font-medium text-gray-900 dark:text-white">
+                      <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {template.name}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1.5 line-clamp-2">
                         {template.description}
                       </div>
                     </button>
@@ -115,7 +119,7 @@ function App() {
             </div>
           </div>
 
-          <div className="lg:sticky lg:top-8 h-fit">
+          <div className="lg:col-span-2 lg:sticky lg:top-8 h-fit">
             <ConfigPreview
               configString={configString}
               format={format as 'json' | 'toml'}
