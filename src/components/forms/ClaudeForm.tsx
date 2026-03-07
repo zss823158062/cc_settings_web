@@ -200,6 +200,18 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
             label="环境变量配置"
             control={control}
             helpText="配置环境变量键值对"
+            presets={[
+              { key: 'ANTHROPIC_AUTH_TOKEN', value: '', description: 'Claude Code 认证令牌' },
+              { key: 'ANTHROPIC_BASE_URL', value: 'http://127.0.0.1:18100', description: 'API 基础 URL（本地代理）' },
+              { key: 'CLAUDE_AUTOCOMPACT_PCT_OVERRIDE', value: '95', description: '自动压缩阈值百分比' },
+              { key: 'CLAUDE_CODE_ATTRIBUTION_HEADER', value: '0', description: '禁用归属头' },
+              { key: 'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC', value: '1', description: '禁用非必要流量' },
+              { key: 'CLAUDE_CODE_PROXY_RESOLVES_HOSTS', value: '1', description: '代理解析主机' },
+              { key: 'DISABLE_INSTALLATION_CHECKS', value: '1', description: '禁用安装检查' },
+              { key: 'NODE_TLS_REJECT_UNAUTHORIZED', value: '0', description: '禁用 TLS 证书验证（开发用）' },
+              { key: 'MAX_THINKING_TOKENS', value: '31999', description: '最大思考 Token 数' },
+              { key: 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS', value: '1', description: '启用实验性 Agent Teams' },
+            ]}
           />
         </div>
       </div>

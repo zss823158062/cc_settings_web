@@ -10,6 +10,7 @@ interface KeyValueFieldProps {
   label: string;
   control: Control<any>;
   helpText?: string;
+  presets?: Array<{ key: string; value: string; description?: string }>;
 }
 
 export const KeyValueField: React.FC<KeyValueFieldProps> = ({
@@ -17,11 +18,16 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
   label,
   control,
   helpText,
+  presets = [],
 }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: `${name}_array`,
   });
+
+  const handleAddPreset = (preset: { key: string; value: string }) => {
+    append(preset);
+  };
 
   return (
     <div className="space-y-2">
@@ -31,6 +37,27 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
       {helpText && (
         <p className="text-xs text-gray-500 dark:text-gray-400">{helpText}</p>
       )}
+
+      {/* 预设选项 */}
+      {presets.length > 0 && (
+        <div className="mb-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700">
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">常用预设：</p>
+          <div className="flex flex-wrap gap-2">
+            {presets.map((preset, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => handleAddPreset(preset)}
+                className="px-3 py-1 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300"
+                title={preset.description}
+              >
+                + {preset.key}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-2">
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-2">
