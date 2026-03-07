@@ -11,10 +11,24 @@ const DEFAULT_CONFIGS = {
     behavior: { auto_save: true, timeout: 30 },
   } as CodexConfig,
   claude: {
-    apiKey: '',
-    model: 'claude-sonnet-4',
-    workspace: { autoSave: true, ignorePatterns: ['node_modules', '.git'] },
-    editor: { tabSize: 2, formatOnSave: true },
+    cleanupPeriodDays: 30,
+    env: {},
+    attribution: {
+      commit: '',
+      pr: '',
+    },
+    permissions: {
+      allow: [],
+      defaultMode: 'default',
+    },
+    hooks: {},
+    enabledPlugins: {},
+    outputStyle: '',
+    language: 'Chinese',
+    spinnerTipsEnabled: true,
+    alwaysThinkingEnabled: false,
+    skipDangerousModePermissionPrompt: false,
+    showTurnDuration: true,
   } as ClaudeConfig,
   gemini: {
     apiKey: '',
