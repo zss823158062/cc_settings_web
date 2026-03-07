@@ -1,6 +1,6 @@
 /**
  * Claude Code 配置的 Zod 验证 Schema
- * 对应 JSON 格式配置
+ * 对应真实的 Claude Code settings.json 结构
  */
 
 import { z } from 'zod';
@@ -8,34 +8,34 @@ import { z } from 'zod';
 /**
  * Claude Code 配置 Schema
  * 验证规则：
- * - apiKey: sk-ant- 开头
- * - model: 非空字符串
- * - workspace.ignorePatterns: 字符串数组
- * - editor.tabSize: 正整数，通常 2 或 4
+ * - cleanupPeriodDays: 正整数
+ * - env: 字符串键值对
+ * - permissions.allow: 字符串数组
+ * - hooks: 复杂嵌套结构
  */
 export const claudeConfigSchema = z.object({
-  apiKey: z
-    .string()
-    .min(1, '此字段为必填项')
-    .startsWith('sk-ant-', 'API Key 必须以 sk-ant- 开头'),
-  model: z
-    .string()
-    .min(1, '此字段为必填项'),
-  workspace: z.object({
-    autoSave: z.boolean(),
-    ignorePatterns: z
-      .array(z.string())
-      .default([]),
-  }),
-  editor: z.object({
-    tabSize: z
-      .number()
-      .int('Tab 缩进大小必须是整数')
-      .positive('Tab 缩进大小必须是正整数')
-      .min(1, 'Tab 缩进大小至少为 1')
-      .max(8, 'Tab 缩进大小不应超过 8'),
-    formatOnSave: z.boolean(),
-  }),
+  cleanupPeriodDays: z.number().int().positive().optional(),
+  env: z.record(z.string()).optional(),
+  attribution: z
+    .object({
+      commit: z.string().optional(),
+      pr: z.string().optional(),
+    })
+    .optional(),
+  permissions: z
+    .object({
+      allow: z.array(z.string()).optional(),
+      defaultMode: z.string().optional(),
+    })
+    .optional(),
+  hooks: z.record(z.any()).optional(),
+  enabledPlugins: z.record(z.any()).optional(),
+  outputStyle: z.string().optional(),
+  language: z.string().optional(),
+  spinnerTipsEnabled: z.boolean().optional(),
+  alwaysThinkingEnabled: z.boolean().optional(),
+  skipDangerousModePermissionPrompt: z.boolean().optional(),
+  showTurnDuration: z.boolean().optional(),
 });
 
 export type ClaudeConfigInput = z.infer<typeof claudeConfigSchema>;

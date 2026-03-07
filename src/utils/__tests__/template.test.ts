@@ -97,13 +97,10 @@ describe('getTemplateById', () => {
     expect(template).not.toBeNull();
 
     const config = template!.values as ClaudeConfig;
-    expect(config.model).toBeTruthy();
-    expect(config.workspace).toBeDefined();
-    expect(Array.isArray(config.workspace.ignorePatterns)).toBe(true);
-    expect(typeof config.workspace.autoSave).toBe('boolean');
-    expect(config.editor).toBeDefined();
-    expect(config.editor.tabSize).toBeGreaterThan(0);
-    expect(typeof config.editor.formatOnSave).toBe('boolean');
+    expect(config.cleanupPeriodDays).toBeDefined();
+    expect(config.outputStyle).toBeTruthy();
+    expect(config.language).toBeTruthy();
+    expect(typeof config.spinnerTipsEnabled).toBe('boolean');
   });
 
   it('应该返回正确的 Gemini 模板结构', () => {
@@ -176,20 +173,18 @@ describe('applyTemplate', () => {
   it('Claude 开发模板应该有合理的默认值', () => {
     const config = applyTemplate('claude-dev') as ClaudeConfig;
 
-    expect(config.workspace.autoSave).toBe(true);
-    expect(config.editor.formatOnSave).toBe(true);
-    expect(config.workspace.ignorePatterns).toContain('node_modules');
-    expect(config.workspace.ignorePatterns).toContain('.git');
+    expect(config.cleanupPeriodDays).toBe(720);
+    expect(config.outputStyle).toBe('Structural Thinking');
+    expect(config.language).toBe('Chinese');
   });
 
-  it('Claude 安全模板应该有更多忽略模式', () => {
+  it('Claude 安全模板应该有更严格的权限', () => {
     const devConfig = applyTemplate('claude-dev') as ClaudeConfig;
     const secureConfig = applyTemplate('claude-secure') as ClaudeConfig;
 
-    expect(secureConfig.workspace.ignorePatterns.length).toBeGreaterThan(
-      devConfig.workspace.ignorePatterns.length
+    expect(secureConfig.permissions?.allow?.length || 0).toBeLessThanOrEqual(
+      devConfig.permissions?.allow?.length || 0
     );
-    expect(secureConfig.workspace.ignorePatterns).toContain('.env');
   });
 
   it('Gemini 开发模板应该有合理的默认值', () => {
@@ -209,13 +204,13 @@ describe('applyTemplate', () => {
     expect(secureConfig.safetySettings.hateSpeech).toContain('LOW');
   });
 
-  it('所有模板的 API Key 应该为空', () => {
+  it('所有模板的敏感信息应该为空', () => {
     const codexConfig = applyTemplate('codex-dev') as CodexConfig;
     const claudeConfig = applyTemplate('claude-dev') as ClaudeConfig;
     const geminiConfig = applyTemplate('gemini-dev') as GeminiConfig;
 
     expect(codexConfig.api.key).toBe('');
-    expect(claudeConfig.apiKey).toBe('');
+    expect(claudeConfig.attribution?.commit).toBe('');
     expect(geminiConfig.apiKey).toBe('');
   });
 });

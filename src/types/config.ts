@@ -32,22 +32,36 @@ export interface CodexConfig {
 
 /** Claude Code 配置结构（对应 JSON 格式） */
 export interface ClaudeConfig {
-  /** API 密钥，格式：sk-ant- 开头 */
-  apiKey: string;
-  /** 模型名称，如 claude-sonnet-4, claude-opus-4 */
-  model: string;
-  workspace: {
-    /** 是否自动保存 */
-    autoSave: boolean;
-    /** 忽略的文件模式列表，如 ["node_modules", ".git"] */
-    ignorePatterns: string[];
+  /** 清理周期（天），默认 720 */
+  cleanupPeriodDays?: number;
+  /** 环境变量配置 */
+  env?: Record<string, string>;
+  /** 归属信息 */
+  attribution?: {
+    commit?: string;
+    pr?: string;
   };
-  editor: {
-    /** Tab 缩进大小，正整数，通常 2 或 4 */
-    tabSize: number;
-    /** 保存时是否格式化 */
-    formatOnSave: boolean;
+  /** 权限配置 */
+  permissions?: {
+    allow?: string[];
+    defaultMode?: string;
   };
+  /** Hooks 配置（复杂嵌套结构） */
+  hooks?: Record<string, any>;
+  /** 启用的插件 */
+  enabledPlugins?: Record<string, any>;
+  /** 输出样式 */
+  outputStyle?: string;
+  /** 语言设置 */
+  language?: string;
+  /** 是否启用 Spinner 提示 */
+  spinnerTipsEnabled?: boolean;
+  /** 是否始终启用思考模式 */
+  alwaysThinkingEnabled?: boolean;
+  /** 是否跳过危险模式权限提示 */
+  skipDangerousModePermissionPrompt?: boolean;
+  /** 是否显示回合时长 */
+  showTurnDuration?: boolean;
 }
 
 /** Gemini CLI 配置结构（对应 JSON 格式） */

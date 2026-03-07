@@ -79,19 +79,37 @@ const codexSecureTemplate: ConfigTemplate = {
 const claudeDevTemplate: ConfigTemplate = {
   id: 'claude-dev',
   name: '开发环境',
-  description: '适合开发调试，自动保存，格式化开启',
+  description: '适合开发调试，启用思考模式，显示回合时长',
   tool: 'claude',
   values: {
-    apiKey: '',
-    model: 'claude-sonnet-4',
-    workspace: {
-      autoSave: true,
-      ignorePatterns: ['node_modules', '.git', 'dist', 'build'],
+    cleanupPeriodDays: 720,
+    env: {
+      ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
+      ANTHROPIC_BASE_URL: 'http://127.0.0.1:18100',
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '95',
+      CLAUDE_CODE_ATTRIBUTION_HEADER: '0',
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+      CLAUDE_CODE_PROXY_RESOLVES_HOSTS: '1',
+      DISABLE_INSTALLATION_CHECKS: '1',
+      NODE_TLS_REJECT_UNAUTHORIZED: '0',
+      MAX_THINKING_TOKENS: '31999',
     },
-    editor: {
-      tabSize: 2,
-      formatOnSave: true,
+    attribution: {
+      commit: '',
+      pr: '',
     },
+    permissions: {
+      allow: ['Bash(find:*)', 'Bash(grep:*)', 'Bash(tree:*)', 'Bash(jq:*)'],
+      defaultMode: 'default',
+    },
+    hooks: {},
+    enabledPlugins: {},
+    outputStyle: 'Structural Thinking',
+    language: 'Chinese',
+    spinnerTipsEnabled: false,
+    alwaysThinkingEnabled: true,
+    skipDangerousModePermissionPrompt: true,
+    showTurnDuration: true,
   } as ClaudeConfig,
 };
 
@@ -99,19 +117,36 @@ const claudeDevTemplate: ConfigTemplate = {
 const claudeProdTemplate: ConfigTemplate = {
   id: 'claude-prod',
   name: '生产环境',
-  description: '适合生产使用，关闭自动保存，使用更强大的模型',
+  description: '适合生产使用，关闭调试功能，严格权限控制',
   tool: 'claude',
   values: {
-    apiKey: '',
-    model: 'claude-opus-4',
-    workspace: {
-      autoSave: false,
-      ignorePatterns: ['node_modules', '.git', 'dist', 'build', 'coverage'],
+    cleanupPeriodDays: 720,
+    env: {
+      ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
+      ANTHROPIC_BASE_URL: 'http://127.0.0.1:18100',
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '95',
+      CLAUDE_CODE_ATTRIBUTION_HEADER: '0',
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+      CLAUDE_CODE_PROXY_RESOLVES_HOSTS: '1',
+      DISABLE_INSTALLATION_CHECKS: '1',
+      NODE_TLS_REJECT_UNAUTHORIZED: '0',
     },
-    editor: {
-      tabSize: 4,
-      formatOnSave: true,
+    attribution: {
+      commit: '',
+      pr: '',
     },
+    permissions: {
+      allow: ['Bash(find:*)', 'Bash(grep:*)'],
+      defaultMode: 'default',
+    },
+    hooks: {},
+    enabledPlugins: {},
+    outputStyle: 'Structural Thinking',
+    language: 'Chinese',
+    spinnerTipsEnabled: false,
+    alwaysThinkingEnabled: false,
+    skipDangerousModePermissionPrompt: false,
+    showTurnDuration: false,
   } as ClaudeConfig,
 };
 
@@ -119,29 +154,35 @@ const claudeProdTemplate: ConfigTemplate = {
 const claudeSecureTemplate: ConfigTemplate = {
   id: 'claude-secure',
   name: '安全模式',
-  description: '适合安全敏感场景，严格的忽略模式',
+  description: '适合安全敏感场景，最小权限，禁用危险操作',
   tool: 'claude',
   values: {
-    apiKey: '',
-    model: 'claude-sonnet-4',
-    workspace: {
-      autoSave: false,
-      ignorePatterns: [
-        'node_modules',
-        '.git',
-        'dist',
-        'build',
-        '.env',
-        '.env.*',
-        'secrets',
-        '*.key',
-        '*.pem',
-      ],
+    cleanupPeriodDays: 720,
+    env: {
+      ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
+      ANTHROPIC_BASE_URL: 'http://127.0.0.1:18100',
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '95',
+      CLAUDE_CODE_ATTRIBUTION_HEADER: '0',
+      CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+      DISABLE_INSTALLATION_CHECKS: '1',
+      NODE_TLS_REJECT_UNAUTHORIZED: '0',
     },
-    editor: {
-      tabSize: 2,
-      formatOnSave: true,
+    attribution: {
+      commit: '',
+      pr: '',
     },
+    permissions: {
+      allow: [],
+      defaultMode: 'default',
+    },
+    hooks: {},
+    enabledPlugins: {},
+    outputStyle: 'Structural Thinking',
+    language: 'Chinese',
+    spinnerTipsEnabled: false,
+    alwaysThinkingEnabled: false,
+    skipDangerousModePermissionPrompt: false,
+    showTurnDuration: false,
   } as ClaudeConfig,
 };
 

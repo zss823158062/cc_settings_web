@@ -9,8 +9,8 @@ export interface FormField {
   name: string;
   /** 显示标签，用户可见的字段名 */
   label: string;
-  /** 字段类型：text | number | boolean | select | array */
-  type: 'text' | 'number' | 'boolean' | 'select' | 'array';
+  /** 字段类型：text | number | boolean | select | array | object | json */
+  type: 'text' | 'number' | 'boolean' | 'select' | 'array' | 'object' | 'json';
   /** 是否必填 */
   required: boolean;
   /** 默认值 */

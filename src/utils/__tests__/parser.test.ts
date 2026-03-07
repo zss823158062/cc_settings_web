@@ -16,25 +16,19 @@ import type { CodexConfig, ClaudeConfig, GeminiConfig } from '@/types/config';
 describe('parser - stringifyJSON', () => {
   it('应该正确格式化 ClaudeConfig 为 JSON（pretty=true）', () => {
     const config: ClaudeConfig = {
-      apiKey: 'sk-ant-test123',
-      model: 'claude-sonnet-4',
-      workspace: {
-        autoSave: true,
-        ignorePatterns: ['node_modules', '.git'],
+      cleanupPeriodDays: 720,
+      env: {
+        ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
       },
-      editor: {
-        tabSize: 2,
-        formatOnSave: true,
-      },
+      outputStyle: 'Structural Thinking',
+      language: 'Chinese',
     };
 
     const result = stringifyJSON(config, true);
 
-    expect(result).toContain('"apiKey": "sk-ant-test123"');
-    expect(result).toContain('"model": "claude-sonnet-4"');
-    expect(result).toContain('"autoSave": true');
-    expect(result).toContain('"ignorePatterns"');
-    expect(result).toContain('"tabSize": 2');
+    expect(result).toContain('"cleanupPeriodDays": 720');
+    expect(result).toContain('"outputStyle": "Structural Thinking"');
+    expect(result).toContain('"language": "Chinese"');
     // 验证格式化（包含换行和缩进）
     expect(result).toContain('\n');
     expect(result).toContain('  ');
@@ -62,22 +56,14 @@ describe('parser - stringifyJSON', () => {
 
   it('应该正确生成紧凑 JSON（pretty=false）', () => {
     const config: ClaudeConfig = {
-      apiKey: 'sk-ant-test',
-      model: 'claude-sonnet-4',
-      workspace: {
-        autoSave: false,
-        ignorePatterns: [],
-      },
-      editor: {
-        tabSize: 4,
-        formatOnSave: false,
-      },
+      cleanupPeriodDays: 720,
+      outputStyle: 'Structural Thinking',
     };
 
     const result = stringifyJSON(config, false);
 
     expect(result).not.toContain('\n');
-    expect(result).toContain('{"apiKey":"sk-ant-test"');
+    expect(result).toContain('{"cleanupPeriodDays":720');
   });
 });
 
@@ -141,25 +127,19 @@ describe('parser - stringifyTOML', () => {
 describe('parser - parseJSON', () => {
   it('应该正确解析 ClaudeConfig JSON 字符串', () => {
     const jsonString = JSON.stringify({
-      apiKey: 'sk-ant-test',
-      model: 'claude-opus-4',
-      workspace: {
-        autoSave: true,
-        ignorePatterns: ['dist', 'build'],
+      cleanupPeriodDays: 720,
+      env: {
+        ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
       },
-      editor: {
-        tabSize: 2,
-        formatOnSave: true,
-      },
+      outputStyle: 'Structural Thinking',
+      language: 'Chinese',
     });
 
     const result = parseJSON<ClaudeConfig>(jsonString);
 
-    expect(result.apiKey).toBe('sk-ant-test');
-    expect(result.model).toBe('claude-opus-4');
-    expect(result.workspace.autoSave).toBe(true);
-    expect(result.workspace.ignorePatterns).toEqual(['dist', 'build']);
-    expect(result.editor.tabSize).toBe(2);
+    expect(result.cleanupPeriodDays).toBe(720);
+    expect(result.outputStyle).toBe('Structural Thinking');
+    expect(result.language).toBe('Chinese');
   });
 
   it('应该正确解析 GeminiConfig JSON 字符串', () => {
@@ -294,23 +274,15 @@ describe('parser - generateConfigString', () => {
 
   it('应该为 claude 工具生成 JSON 字符串', () => {
     const config: ClaudeConfig = {
-      apiKey: 'sk-ant-test',
-      model: 'claude-sonnet-4',
-      workspace: {
-        autoSave: true,
-        ignorePatterns: ['node_modules'],
-      },
-      editor: {
-        tabSize: 2,
-        formatOnSave: true,
-      },
+      cleanupPeriodDays: 720,
+      outputStyle: 'Structural Thinking',
+      language: 'Chinese',
     };
 
     const result = generateConfigString('claude', config);
 
-    expect(result).toContain('"apiKey"');
-    expect(result).toContain('"model"');
-    expect(result).toContain('"workspace"');
+    expect(result).toContain('"cleanupPeriodDays"');
+    expect(result).toContain('"outputStyle"');
     expect(result).toContain('\n'); // 验证是格式化的 JSON
   });
 
@@ -361,16 +333,12 @@ describe('parser - 集成测试', () => {
 
   it('应该能够往返转换 ClaudeConfig（stringify -> parse）', () => {
     const original: ClaudeConfig = {
-      apiKey: 'sk-ant-original',
-      model: 'claude-opus-4',
-      workspace: {
-        autoSave: false,
-        ignorePatterns: ['dist', 'coverage', '.env'],
+      cleanupPeriodDays: 720,
+      env: {
+        ANTHROPIC_AUTH_TOKEN: 'code-switch-r',
       },
-      editor: {
-        tabSize: 4,
-        formatOnSave: false,
-      },
+      outputStyle: 'Structural Thinking',
+      language: 'Chinese',
     };
 
     const jsonString = stringifyJSON(original);
