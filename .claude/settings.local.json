@@ -11,7 +11,8 @@
       "Bash(npx tsc:*)",
       "Bash(git worktree:*)",
       "Bash(git:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(sed:*)"
     ]
   }
 }

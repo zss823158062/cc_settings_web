@@ -1,3 +1,4 @@
+import { INPUT_STYLES } from '@/styles/formStyles';
 /**
  * Codex 配置表单组件
  */
@@ -86,7 +87,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
               type="text"
               {...register('api.key')}
               placeholder="sk-..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.api?.key && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -104,7 +105,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
               type="text"
               {...register('api.base_url')}
               placeholder="https://api.openai.com/v1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.api?.base_url && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -125,7 +126,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
               type="text"
               {...register('model.name')}
               placeholder="gpt-4"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.model?.name && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -154,7 +155,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
               type="number"
               step="0.1"
               {...register('model.temperature', { valueAsNumber: true })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.model?.temperature && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -174,7 +175,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
             <input
               type="number"
               {...register('model.max_tokens', { valueAsNumber: true })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.model?.max_tokens && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -206,7 +207,7 @@ export const CodexForm: React.FC<CodexFormProps> = ({
             <input
               type="number"
               {...register('behavior.timeout', { valueAsNumber: true })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.behavior?.timeout && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">

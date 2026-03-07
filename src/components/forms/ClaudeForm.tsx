@@ -10,6 +10,7 @@ import { ClaudeConfig } from '@/types/config';
 import { ArrayField } from './ArrayField';
 import { KeyValueField } from './KeyValueField';
 import { JsonField } from './JsonField';
+import { INPUT_STYLES } from '@/styles/formStyles';
 
 interface ClaudeFormProps {
   defaultValues?: Partial<ClaudeConfig>;
@@ -122,7 +123,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="number"
               {...register('cleanupPeriodDays', { valueAsNumber: true })}
               placeholder="720"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.cleanupPeriodDays && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -140,7 +141,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="text"
               {...register('outputStyle')}
               placeholder="Structural Thinking"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
           </div>
 
@@ -153,7 +154,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="text"
               {...register('language')}
               placeholder="Chinese"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
           </div>
         </div>
@@ -266,7 +267,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="text"
               {...register('permissions.defaultMode')}
               placeholder="default"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
           </div>
         </div>
@@ -287,7 +288,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="text"
               {...register('attribution.commit')}
               placeholder=""
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
           </div>
 
@@ -300,7 +301,7 @@ export const ClaudeForm: React.FC<ClaudeFormProps> = ({
               type="text"
               {...register('attribution.pr')}
               placeholder=""
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
           </div>
         </div>

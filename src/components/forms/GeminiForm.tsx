@@ -1,3 +1,4 @@
+import { INPUT_STYLES } from '@/styles/formStyles';
 /**
  * Gemini CLI 配置表单组件
  */
@@ -88,7 +89,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
               type="text"
               {...register('apiKey')}
               placeholder="AIza..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.apiKey && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -106,7 +107,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
               type="text"
               {...register('projectId')}
               placeholder="my-project"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.projectId && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -124,7 +125,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
               type="text"
               {...register('region')}
               placeholder="us-central1"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.region && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -145,7 +146,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
               type="text"
               {...register('model')}
               placeholder="gemini-pro"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             {errors.model && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -172,7 +173,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
             </label>
             <select
               {...register('safetySettings.harassment')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             >
               {safetyLevelOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -194,7 +195,7 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
             </label>
             <select
               {...register('safetySettings.hateSpeech')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             >
               {safetyLevelOptions.map((option) => (
                 <option key={option.value} value={option.value}>

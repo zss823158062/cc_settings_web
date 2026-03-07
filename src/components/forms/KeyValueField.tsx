@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { useFieldArray, Control } from 'react-hook-form';
+import { INPUT_STYLES } from '@/styles/formStyles';
 
 interface KeyValueFieldProps {
   name: string;
@@ -65,13 +66,13 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
               type="text"
               {...control.register(`${name}_array.${index}.key` as const)}
               placeholder="键"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             <input
               type="text"
               {...control.register(`${name}_array.${index}.value` as const)}
               placeholder="值"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              className={INPUT_STYLES}
             />
             <button
               type="button"

@@ -27,7 +27,7 @@ export function Input({
         </label>
       )}
       <input
-        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 dark:text-white ${inputStyles} ${className}`}
+        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-gray-800 dark:text-white ${inputStyles} ${className}`}
         {...props}
       />
       {error && (
