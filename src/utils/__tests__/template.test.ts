@@ -80,16 +80,10 @@ describe('getTemplateById', () => {
     expect(template).not.toBeNull();
 
     const config = template!.values as CodexConfig;
-    expect(config.api).toBeDefined();
-    expect(config.api.base_url).toBeTruthy();
     expect(config.model).toBeDefined();
-    expect(config.model.name).toBeTruthy();
-    expect(config.model.temperature).toBeGreaterThanOrEqual(0);
-    expect(config.model.temperature).toBeLessThanOrEqual(2);
-    expect(config.model.max_tokens).toBeGreaterThan(0);
-    expect(config.behavior).toBeDefined();
-    expect(typeof config.behavior.auto_save).toBe('boolean');
-    expect(config.behavior.timeout).toBeGreaterThan(0);
+    expect(typeof config.model).toBe('string');
+    expect(config.approval_policy).toBeDefined();
+    expect(config.sandbox_mode).toBeDefined();
   });
 
   it('应该返回正确的 Claude 模板结构', () => {
@@ -123,9 +117,8 @@ describe('applyTemplate', () => {
     expect(values).not.toBeNull();
 
     const config = values as CodexConfig;
-    expect(config.api).toBeDefined();
     expect(config.model).toBeDefined();
-    expect(config.behavior).toBeDefined();
+    expect(config.approval_policy).toBeDefined();
   });
 
   it('应该返回 null 对于不存在的模板', () => {
@@ -138,36 +131,33 @@ describe('applyTemplate', () => {
     const values2 = applyTemplate('codex-dev') as CodexConfig;
 
     expect(values1).not.toBe(values2);
-    expect(values1.api).not.toBe(values2.api);
     expect(values1.model).not.toBe(values2.model);
-    expect(values1.behavior).not.toBe(values2.behavior);
 
     // 修改一个不应影响另一个
-    values1.model.temperature = 999;
-    expect(values2.model.temperature).not.toBe(999);
+    values1.model = 'gpt-4';
+    expect(values2.model).not.toBe('gpt-4');
   });
 
   it('Codex 开发模板应该有合理的默认值', () => {
     const config = applyTemplate('codex-dev') as CodexConfig;
 
-    expect(config.api.base_url).toBe('https://api.openai.com/v1');
-    expect(config.model.temperature).toBeGreaterThan(0.5); // 开发环境温度较高
-    expect(config.behavior.auto_save).toBe(true); // 开发环境自动保存
-    expect(config.behavior.timeout).toBeGreaterThan(30); // 开发环境超时较长
+    expect(config.model).toBe('gpt-5.4');
+    expect(config.approval_policy).toBe('on-request');
+    expect(config.sandbox_mode).toBe('workspace-write');
   });
 
   it('Codex 生产模板应该有合理的默认值', () => {
     const config = applyTemplate('codex-prod') as CodexConfig;
 
-    expect(config.model.temperature).toBeLessThan(0.5); // 生产环境温度较低
-    expect(config.behavior.auto_save).toBe(false); // 生产环境不自动保存
+    expect(config.approval_policy).toBeDefined();
+    expect(config.sandbox_mode).toBeDefined();
   });
 
   it('Codex 安全模板应该有严格的限制', () => {
     const config = applyTemplate('codex-secure') as CodexConfig;
 
-    expect(config.model.temperature).toBeLessThanOrEqual(0.2); // 安全模式温度极低
-    expect(config.model.max_tokens).toBeLessThanOrEqual(1024); // token 限制严格
+    expect(config.sandbox_mode).toBe('read-only');
+    expect(config.approval_policy).toBe('untrusted');
   });
 
   it('Claude 开发模板应该有合理的默认值', () => {
@@ -209,7 +199,7 @@ describe('applyTemplate', () => {
     const claudeConfig = applyTemplate('claude-dev') as ClaudeConfig;
     const geminiConfig = applyTemplate('gemini-dev') as GeminiConfig;
 
-    expect(codexConfig.api.key).toBe('');
+    expect(codexConfig.model).toBeDefined();
     expect(claudeConfig.attribution?.commit).toBe('');
     expect(geminiConfig.apiKey).toBe('');
   });

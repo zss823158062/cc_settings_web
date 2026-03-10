@@ -3,7 +3,7 @@
  * 支持动态添加和删除键值对
  */
 import React from 'react';
-import { useFieldArray, Control } from 'react-hook-form';
+import { useFieldArray, Control, Controller } from 'react-hook-form';
 import { INPUT_STYLES } from '@/styles/formStyles';
 
 interface KeyValueFieldProps {
@@ -12,6 +12,8 @@ interface KeyValueFieldProps {
   control: Control<any>;
   helpText?: string;
   presets?: Array<{ key: string; value: string; description?: string }>;
+  /** 可选的 key 选项列表（用于 datalist），支持带描述的对象格式 */
+  keyOptions?: Array<string | { value: string; label: string }>;
 }
 
 export const KeyValueField: React.FC<KeyValueFieldProps> = ({
@@ -20,6 +22,7 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
   control,
   helpText,
   presets = [],
+  keyOptions = [],
 }) => {
   const { fields, append, remove } = useFieldArray({
     control,
@@ -29,6 +32,9 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
   const handleAddPreset = (preset: { key: string; value: string }) => {
     append(preset);
   };
+
+  // 生成唯一的 datalist ID
+  const datalistId = `${name}-key-options`;
 
   return (
     <div className="space-y-2">
@@ -59,20 +65,47 @@ export const KeyValueField: React.FC<KeyValueFieldProps> = ({
         </div>
       )}
 
+      {/* datalist 用于 key 字段的自动完成 */}
+      {keyOptions.length > 0 && (
+        <datalist id={datalistId}>
+          {keyOptions.map((option, index) => {
+            if (typeof option === 'string') {
+              return <option key={index} value={option} />;
+            } else {
+              // 支持带描述的格式：value 是实际值，label 是显示的描述
+              return <option key={index} value={option.value} label={option.label} />;
+            }
+          })}
+        </datalist>
+      )}
+
       <div className="space-y-2">
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-2">
-            <input
-              type="text"
-              {...control.register(`${name}_array.${index}.key` as const)}
-              placeholder="键"
-              className={INPUT_STYLES}
+            <Controller
+              name={`${name}_array.${index}.key` as const}
+              control={control}
+              render={({ field: inputField }) => (
+                <input
+                  type="text"
+                  {...inputField}
+                  list={keyOptions.length > 0 ? datalistId : undefined}
+                  placeholder="键"
+                  className={INPUT_STYLES}
+                />
+              )}
             />
-            <input
-              type="text"
-              {...control.register(`${name}_array.${index}.value` as const)}
-              placeholder="值"
-              className={INPUT_STYLES}
+            <Controller
+              name={`${name}_array.${index}.value` as const}
+              control={control}
+              render={({ field: inputField }) => (
+                <input
+                  type="text"
+                  {...inputField}
+                  placeholder="值"
+                  className={INPUT_STYLES}
+                />
+              )}
             />
             <button
               type="button"

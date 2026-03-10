@@ -3,7 +3,8 @@
  * 支持动态添加和删除数组项
  */
 import React from 'react';
-import { useFieldArray, Control } from 'react-hook-form';
+import { useFieldArray, Control, Controller } from 'react-hook-form';
+import { INPUT_STYLES } from '@/styles/formStyles';
 
 interface ArrayFieldProps {
   name: string;
@@ -36,11 +37,17 @@ export const ArrayField: React.FC<ArrayFieldProps> = ({
       <div className="space-y-2">
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-2">
-            <input
-              type="text"
-              {...control.register(`${name}.${index}` as const)}
-              placeholder={placeholder}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            <Controller
+              name={`${name}.${index}` as const}
+              control={control}
+              render={({ field: inputField }) => (
+                <input
+                  type="text"
+                  {...inputField}
+                  placeholder={placeholder}
+                  className={`flex-1 ${INPUT_STYLES}`}
+                />
+              )}
             />
             <button
               type="button"

@@ -28,12 +28,54 @@ export function SyntaxHighlight({ code, language }: SyntaxHighlightProps) {
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    return escaped
-      .replace(/^\[.*\]$/gm, '<span class="text-blue-600 dark:text-blue-400 font-bold">$&</span>')
-      .replace(/^(\w+)\s*=/gm, '<span class="text-purple-600 dark:text-purple-400">$1</span> =')
-      .replace(/=\s*("(?:\\.|[^"\\])*")/g, '= <span class="text-green-600 dark:text-green-400">$1</span>')
-      .replace(/=\s*(true|false)\b/g, '= <span class="text-orange-600 dark:text-orange-400">$1</span>')
-      .replace(/=\s*(-?\d+\.?\d*)\b/g, '= <span class="text-orange-600 dark:text-orange-400">$1</span>');
+    // 按行处理，避免正则替换冲突
+    const lines = escaped.split('\n');
+    const highlighted = lines.map(line => {
+      // 空行
+      if (!line.trim()) return line;
+
+      // TOML 表格标题 [section]
+      if (/^\[.*\]$/.test(line)) {
+        return `<span class="text-blue-600 dark:text-blue-400 font-bold">${line}</span>`;
+      }
+
+      // 键值对
+      const kvMatch = line.match(/^(\w+)\s*=\s*(.+)$/);
+      if (kvMatch) {
+        const key = kvMatch[1];
+        const value = kvMatch[2].trim();
+
+        let highlightedValue = value;
+
+        // 字符串值
+        if (/^".*"$/.test(value)) {
+          highlightedValue = `<span class="text-green-600 dark:text-green-400">${value}</span>`;
+        }
+        // 布尔值
+        else if (/^(true|false)$/.test(value)) {
+          highlightedValue = `<span class="text-orange-600 dark:text-orange-400">${value}</span>`;
+        }
+        // 数字
+        else if (/^-?\d+\.?\d*$/.test(value)) {
+          highlightedValue = `<span class="text-orange-600 dark:text-orange-400">${value}</span>`;
+        }
+        // 数组
+        else if (/^\[.*\]$/.test(value)) {
+          highlightedValue = value.replace(/"([^"]*)"/g, '<span class="text-green-600 dark:text-green-400">"$1"</span>');
+        }
+
+        return `<span class="text-purple-600 dark:text-purple-400">${key}</span> = ${highlightedValue}`;
+      }
+
+      // 注释
+      if (line.trim().startsWith('#')) {
+        return `<span class="text-gray-500 dark:text-gray-500">${line}</span>`;
+      }
+
+      return line;
+    });
+
+    return highlighted.join('\n');
   };
 
   const highlightedCode = language === 'json' ? highlightJSON(code) : highlightTOML(code);

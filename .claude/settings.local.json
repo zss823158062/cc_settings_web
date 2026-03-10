@@ -12,7 +12,22 @@
       "Bash(git worktree:*)",
       "Bash(git:*)",
       "Bash(npm run:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "mcp__Sequential_thinking__sequentialthinking",
+      "mcp__Playwright__browser_navigate",
+      "mcp__Playwright__browser_take_screenshot",
+      "mcp__Playwright__browser_console_messages",
+      "mcp__Playwright__browser_click",
+      "mcp__Playwright__browser_type",
+      "mcp__Playwright__browser_snapshot",
+      "mcp__Playwright__browser_network_requests",
+      "mcp__Augment-Context-Engine__codebase-retrieval",
+      "mcp__Playwright__browser_close",
+      "Bash(pkill:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:developers.openai.com)",
+      "Bash(npx vite:*)",
+      "Bash(rm:*)"
     ]
   }
 }

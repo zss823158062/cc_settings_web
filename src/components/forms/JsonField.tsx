@@ -1,9 +1,10 @@
 /**
  * JSON 字段组件
- * 支持 JSON 格式的文本编辑
+ * 使用普通 textarea，失去焦点时校验 JSON 格式
  */
 import React, { useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
+import { TEXTAREA_STYLES } from '@/styles/formStyles';
 
 interface JsonFieldProps {
   name: string;
@@ -31,29 +32,47 @@ export const JsonField: React.FC<JsonFieldProps> = ({
       <Controller
         name={name}
         control={control}
-        render={({ field }) => (
-          <textarea
-            value={
-              typeof field.value === 'string'
-                ? field.value
-                : JSON.stringify(field.value || {}, null, 2)
-            }
-            onChange={(e) => {
-              const text = e.target.value;
-              try {
-                const parsed = JSON.parse(text);
-                field.onChange(parsed);
+        render={({ field }) => {
+          // 将对象转换为格式化的 JSON 字符串用于显示
+          const stringValue = typeof field.value === 'string'
+            ? field.value
+            : JSON.stringify(field.value || {}, null, 2);
+
+          return (
+            <textarea
+              value={stringValue}
+              onChange={(e) => {
+                // 输入时直接更新，不校验
+                field.onChange(e.target.value);
                 setError('');
-              } catch (err) {
-                setError('无效的 JSON 格式');
-                field.onChange(text);
-              }
-            }}
-            rows={6}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white font-mono text-sm"
-            placeholder="{}"
-          />
-        )}
+              }}
+              onBlur={(e) => {
+                // 失去焦点时校验并转换
+                const text = e.target.value.trim();
+
+                // 空输入转换为空对象
+                if (!text) {
+                  field.onChange({});
+                  setError('');
+                  return;
+                }
+
+                // 尝试解析 JSON
+                try {
+                  const parsed = JSON.parse(text);
+                  field.onChange(parsed);
+                  setError('');
+                } catch (err) {
+                  setError('无效的 JSON 格式');
+                  // 保持用户输入，不转换
+                }
+              }}
+              rows={6}
+              className={`${TEXTAREA_STYLES} font-mono text-sm`}
+              placeholder="{}"
+            />
+          );
+        }}
       />
       {error && (
         <p className="text-sm text-red-600 dark:text-red-400">{error}</p>

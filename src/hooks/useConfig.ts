@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import type { ToolType, ConfigValues, CodexConfig, ClaudeConfig, GeminiConfig } from '@/types/config';
 import { generateConfigString } from '@/utils/parser';
 import { importConfigFile, exportConfigFile } from '@/utils/file';
@@ -6,9 +6,13 @@ import { applyTemplate } from '@/utils/template';
 
 const DEFAULT_CONFIGS = {
   codex: {
-    api: { key: '', base_url: 'https://api.openai.com/v1' },
-    model: { name: 'gpt-4', temperature: 0.7, max_tokens: 2048 },
-    behavior: { auto_save: true, timeout: 30 },
+    model: 'gpt-5.4',
+    approval_policy: 'on-request',
+    sandbox_mode: 'workspace-write',
+    web_search: 'cached',
+    personality: 'friendly',
+    allow_login_shell: false,
+    project_root_markers: ['.git'],
   } as CodexConfig,
   claude: {
     cleanupPeriodDays: 30,
@@ -44,7 +48,13 @@ export function useConfig() {
   const [configs, setConfigs] = useState<Record<ToolType, ConfigValues>>(DEFAULT_CONFIGS);
 
   const currentConfig = configs[currentTool];
-  const configString = generateConfigString(currentTool, currentConfig);
+
+  // 使用 useMemo 缓存配置字符串生成结果，避免每次渲染都重新计算
+  const configString = useMemo(
+    () => generateConfigString(currentTool, currentConfig),
+    [currentTool, currentConfig]
+  );
+
   const format = currentTool === 'codex' ? 'toml' : 'json';
 
   const handleConfigChange = useCallback((newConfig: ConfigValues) => {

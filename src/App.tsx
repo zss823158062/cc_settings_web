@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { Tabs } from './components/common/Tabs';
 import { Button } from './components/common/Button';
 import { FileUpload } from './components/common/FileUpload';
+import { ScrollToTop } from './components/common/ScrollToTop';
 import { ConfigPreview } from './components/preview/ConfigPreview';
 import { CodexForm } from './components/forms/CodexForm';
 import { ClaudeForm } from './components/forms/ClaudeForm';
@@ -23,6 +24,7 @@ function App() {
   const { isDarkMode, toggleTheme } = useTheme();
   const {
     currentTool,
+    currentConfig,
     configString,
     format,
     handleToolChange,
@@ -34,7 +36,9 @@ function App() {
   } = useConfig();
 
   const [showTemplates, setShowTemplates] = useState(false);
-  const templates = getTemplatesByTool(currentTool);
+
+  // 使用 useMemo 缓存模板列表，避免每次渲染都重新计算
+  const templates = useMemo(() => getTemplatesByTool(currentTool), [currentTool]);
 
   const handleFileUpload = async (file: File) => {
     const result = await handleImport(file);
@@ -69,12 +73,21 @@ function App() {
             <div className="flex gap-2 overflow-x-auto pb-2">
               <FileUpload onChange={handleFileUpload} accept=".json,.toml" buttonText="导入配置" />
               <Button onClick={handleExport} variant="secondary" className="whitespace-nowrap">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
                 导出配置
               </Button>
               <Button onClick={() => setShowTemplates(!showTemplates)} variant="secondary" className="whitespace-nowrap">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
                 {showTemplates ? '隐藏模板' : '应用模板'}
               </Button>
               <Button onClick={handleReset} variant="danger" className="whitespace-nowrap">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
                 重置配置
               </Button>
             </div>
@@ -108,18 +121,18 @@ function App() {
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               {currentTool === 'codex' && (
-                <CodexForm onChange={handleConfigChange} />
+                <CodexForm onChange={handleConfigChange} defaultValues={currentConfig as any} />
               )}
               {currentTool === 'claude' && (
-                <ClaudeForm onChange={handleConfigChange} />
+                <ClaudeForm onChange={handleConfigChange} defaultValues={currentConfig as any} />
               )}
               {currentTool === 'gemini' && (
-                <GeminiForm onChange={handleConfigChange} />
+                <GeminiForm onChange={handleConfigChange} defaultValues={currentConfig as any} />
               )}
             </div>
           </div>
 
-          <div className="lg:col-span-2 lg:sticky lg:top-8 h-fit">
+          <div className="lg:col-span-2 lg:sticky lg:top-24 h-fit">
             <ConfigPreview
               configString={configString}
               format={format as 'json' | 'toml'}
@@ -130,6 +143,7 @@ function App() {
       </main>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 }

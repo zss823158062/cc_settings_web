@@ -2,7 +2,7 @@ import { INPUT_STYLES } from '@/styles/formStyles';
 /**
  * Gemini CLI 配置表单组件
  */
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { geminiSchema, GeminiFormData } from '@/schemas/gemini.schema';
@@ -32,7 +32,8 @@ const safetyLevelOptions = [
   { label: '仅阻止高级', value: 'BLOCK_HIGH' },
 ];
 
-export const GeminiForm: React.FC<GeminiFormProps> = ({
+const GeminiFormComponent: React.FC<GeminiFormProps> = ({
+  defaultValues,
   onChange,
   onSubmit,
 }) => {
@@ -40,31 +41,54 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
     register,
     handleSubmit,
     watch,
-    formState: { errors },
     reset,
+    formState: { errors },
   } = useForm<GeminiFormData>({
     resolver: zodResolver(geminiSchema),
     defaultValues: defaultGeminiValues,
     mode: 'onChange',
   });
 
+  // 使用 useRef 存储防抖定时器
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // 使用 ref 跟踪是否是内部变化（用户输入）
+  const isInternalChangeRef = useRef(false);
+
+  // 当外部 defaultValues 变化时同步到表单（仅在非内部变化时）
+  React.useEffect(() => {
+    if (defaultValues && !isInternalChangeRef.current) {
+      reset(defaultValues as GeminiFormData);
+    }
+    isInternalChangeRef.current = false;
+  }, [defaultValues, reset]);
+
+  // 防抖的 onChange 处理
+  const debouncedOnChange = useCallback((value: GeminiConfig) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      onChange?.(value);
+    }, 300);
+  }, [onChange]);
+
   // 监听表单变化并触发 onChange
   React.useEffect(() => {
     const subscription = watch((value) => {
-      if (onChange && value) {
-        onChange(value as unknown as GeminiConfig);
+      if (value) {
+        // 标记为内部变化
+        isInternalChangeRef.current = true;
+        debouncedOnChange(value as unknown as GeminiConfig);
       }
     });
-    return () => subscription.unsubscribe();
-  }, [watch, onChange]);
-
-  // 暴露 reset 方法
-  React.useImperativeHandle(
-    React.useRef<{ reset: () => void }>(),
-    () => ({
-      reset: () => reset(defaultGeminiValues),
-    })
-  );
+    return () => {
+      subscription.unsubscribe();
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [watch, debouncedOnChange]);
 
   const onFormSubmit: SubmitHandler<GeminiFormData> = (data) => {
     if (onSubmit) {
@@ -74,6 +98,23 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+      {/* 开发中提示 */}
+      <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 rounded">
+        <div className="flex items-start">
+          <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          <div>
+            <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-300 mb-1">
+              功能开发中
+            </h3>
+            <p className="text-sm text-yellow-700 dark:text-yellow-400">
+              Gemini CLI 配置功能暂未开发完成，敬请期待后续版本更新。
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* 基础配置 */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
@@ -214,3 +255,6 @@ export const GeminiForm: React.FC<GeminiFormProps> = ({
     </form>
   );
 };
+
+// 使用 React.memo 优化性能，避免不必要的重渲染
+export const GeminiForm = React.memo(GeminiFormComponent);

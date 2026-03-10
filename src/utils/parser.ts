@@ -13,10 +13,48 @@ import type { CodexConfig, ClaudeConfig, GeminiConfig, ToolType, ConfigValues } 
  * @returns 格式化的 JSON 字符串
  */
 export function stringifyJSON(config: ClaudeConfig | GeminiConfig, pretty: boolean = true): string {
+  // 清理空对象和空字符串
+  const cleanConfig = (obj: any, parentKey?: string): any => {
+    if (obj === null || obj === undefined) return undefined;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.length > 0 ? obj : undefined;
+
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // 跳过空值
+      if (value === null || value === undefined || value === '') continue;
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = cleanConfig(value, key);
+        // 只有当清理后的对象不为空时才添加
+        if (cleanedValue !== undefined && Object.keys(cleanedValue).length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        const cleanedValue = cleanConfig(value, key);
+        if (cleanedValue !== undefined && cleanedValue.length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else {
+        // 非对象非数组的值直接添加
+        cleaned[key] = value;
+      }
+    }
+
+    // 特殊处理：如果是 statusLine 或 fileSuggestion 对象，且只有 type 字段没有 command，则返回 undefined
+    if ((parentKey === 'statusLine' || parentKey === 'fileSuggestion') &&
+        cleaned.type && !cleaned.command) {
+      return undefined;
+    }
+
+    return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+  };
+
+  const cleaned = cleanConfig(config);
   if (pretty) {
-    return JSON.stringify(config, null, 2);
+    return JSON.stringify(cleaned, null, 2);
   }
-  return JSON.stringify(config);
+  return JSON.stringify(cleaned);
 }
 
 /**
@@ -25,7 +63,38 @@ export function stringifyJSON(config: ClaudeConfig | GeminiConfig, pretty: boole
  * @returns TOML 格式字符串
  */
 export function stringifyTOML(config: CodexConfig): string {
-  return TOML.stringify(config as unknown as TOML.JsonMap);
+  // 清理空值和空对象
+  const cleanConfig = (obj: any): any => {
+    if (obj === null || obj === undefined) return undefined;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.length > 0 ? obj : undefined;
+
+    const cleaned: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // 跳过空值
+      if (value === null || value === undefined || value === '') continue;
+
+      if (typeof value === 'object' && !Array.isArray(value)) {
+        const cleanedValue = cleanConfig(value);
+        // 只有当清理后的对象不为空时才添加
+        if (cleanedValue !== undefined && Object.keys(cleanedValue).length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else if (Array.isArray(value)) {
+        const cleanedValue = cleanConfig(value);
+        if (cleanedValue !== undefined && cleanedValue.length > 0) {
+          cleaned[key] = cleanedValue;
+        }
+      } else {
+        // 非对象非数组的值直接添加
+        cleaned[key] = value;
+      }
+    }
+    return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+  };
+
+  const cleaned = cleanConfig(config) || {};
+  return TOML.stringify(cleaned as unknown as TOML.JsonMap);
 }
 
 /**

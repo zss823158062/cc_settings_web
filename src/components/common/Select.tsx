@@ -34,7 +34,7 @@ export function Select({
         </label>
       )}
       <select
-        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-white dark:bg-gray-800 dark:text-white ${selectStyles} ${className}`}
+        className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 ${selectStyles} ${className}`}
         {...props}
       >
         {placeholder && <option value="">{placeholder}</option>}

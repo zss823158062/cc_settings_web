@@ -10,21 +10,69 @@ import type { CodexConfig, ClaudeConfig, GeminiConfig } from '@/types/config';
 const codexDevTemplate: ConfigTemplate = {
   id: 'codex-dev',
   name: '开发环境',
-  description: '适合开发调试，温度较高，自动保存，超时时间较长',
+  description: '适合开发调试，启用多代理和实验性功能',
   tool: 'codex',
   values: {
-    api: {
-      key: '',
-      base_url: 'https://api.openai.com/v1',
+    model: 'gpt-5.4',
+    approval_policy: 'on-request',
+    sandbox_mode: 'workspace-write',
+    web_search: 'cached',
+    personality: 'friendly',
+    allow_login_shell: false,
+    project_root_markers: ['.git'],
+    service_tier: 'pro',
+    check_for_update_on_startup: true,
+    features: {
+      shell_snapshot: true,
+      multi_agent: true,
+      unified_exec: true,
+      auto_memory: true,
+      context_compression: true,
+      streaming_output: true,
+      code_review: true,
+      git_integration: true,
     },
-    model: {
-      name: 'gpt-4',
-      temperature: 0.8,
-      max_tokens: 2048,
+    tui: {
+      notifications: true,
+      animations: true,
+      alternate_screen: true,
     },
-    behavior: {
-      auto_save: true,
-      timeout: 60,
+    history: {
+      persistence: 'local',
+      retention_days: 30,
+    },
+    otel: {
+      exporter: 'otlp-http',
+      endpoint: 'http://localhost:4318',
+      sampling_rate: 1.0,
+      service_name: 'codex-dev',
+      enable_tracing: true,
+      enable_metrics: true,
+      log_user_prompt: false,
+    },
+    analytics: {
+      enabled: true,
+    },
+    feedback: {
+      enabled: true,
+    },
+    agents: {
+      max_concurrent: 5,
+      timeout: 300,
+      communication_mode: 'direct',
+    },
+    permissions: {
+      network: {
+        allow_all: true,
+      },
+    },
+    model_providers: {
+      'local-llm': {
+        base_url: 'http://127.0.0.1:11434',
+        name: 'local-llm',
+        requires_openai_auth: false,
+        wire_api: 'responses',
+      },
     },
   } as CodexConfig,
 };
@@ -33,21 +81,55 @@ const codexDevTemplate: ConfigTemplate = {
 const codexProdTemplate: ConfigTemplate = {
   id: 'codex-prod',
   name: '生产环境',
-  description: '适合生产使用，温度较低，关闭自动保存，超时时间适中',
+  description: '适合生产使用，禁用实验性功能，严格审批',
   tool: 'codex',
   values: {
-    api: {
-      key: '',
-      base_url: 'https://api.openai.com/v1',
+    model: 'gpt-5.4',
+    approval_policy: 'on-request',
+    sandbox_mode: 'workspace-write',
+    web_search: 'disabled',
+    personality: 'pragmatic',
+    allow_login_shell: false,
+    project_root_markers: ['.git'],
+    service_tier: 'team',
+    compact_prompt: true,
+    hide_agent_reasoning: true,
+    features: {
+      shell_snapshot: false,
+      multi_agent: false,
+      unified_exec: false,
+      auto_memory: false,
+      context_compression: true,
+      streaming_output: true,
+      code_review: true,
+      git_integration: true,
     },
-    model: {
-      name: 'gpt-4',
-      temperature: 0.3,
-      max_tokens: 2048,
+    history: {
+      persistence: 'local',
+      retention_days: 90,
     },
-    behavior: {
-      auto_save: false,
-      timeout: 30,
+    otel: {
+      exporter: 'otlp-http',
+      endpoint: 'http://localhost:4318',
+      sampling_rate: 0.1,
+      service_name: 'codex-prod',
+      enable_tracing: true,
+      enable_metrics: true,
+      log_user_prompt: false,
+    },
+    analytics: {
+      enabled: false,
+    },
+    agents: {
+      max_concurrent: 3,
+      timeout: 600,
+      communication_mode: 'queue',
+    },
+    permissions: {
+      network: {
+        allow_all: false,
+        allowed_domains: ['github.com', 'gitlab.com'],
+      },
     },
   } as CodexConfig,
 };
@@ -56,21 +138,63 @@ const codexProdTemplate: ConfigTemplate = {
 const codexSecureTemplate: ConfigTemplate = {
   id: 'codex-secure',
   name: '安全模式',
-  description: '适合安全敏感场景，温度极低，token 限制严格',
+  description: '适合安全敏感场景，只读沙箱，不信任审批',
   tool: 'codex',
   values: {
-    api: {
-      key: '',
-      base_url: 'https://api.openai.com/v1',
+    model: 'gpt-5.4',
+    approval_policy: 'untrusted',
+    sandbox_mode: 'read-only',
+    web_search: 'disabled',
+    personality: 'pragmatic',
+    allow_login_shell: false,
+    project_root_markers: ['.git'],
+    service_tier: 'free',
+    compact_prompt: true,
+    shell_environment_policy: {
+      inherit: 'none',
+      include_only: ['PATH', 'HOME'],
     },
-    model: {
-      name: 'gpt-3.5-turbo',
-      temperature: 0.1,
-      max_tokens: 1024,
+    features: {
+      shell_snapshot: false,
+      multi_agent: false,
+      unified_exec: false,
+      auto_memory: false,
+      context_compression: false,
+      streaming_output: false,
+      code_review: false,
+      git_integration: false,
     },
-    behavior: {
-      auto_save: false,
-      timeout: 30,
+    tools: {
+      disabled: ['Bash'],
+    },
+    sandbox_workspace_write: {
+      denied_paths: ['/etc', '/usr', '/bin'],
+    },
+    history: {
+      persistence: 'none',
+    },
+    otel: {
+      exporter: 'none',
+      log_user_prompt: false,
+      enable_tracing: false,
+      enable_metrics: false,
+    },
+    analytics: {
+      enabled: false,
+    },
+    feedback: {
+      enabled: false,
+    },
+    agents: {
+      max_concurrent: 1,
+      timeout: 120,
+      communication_mode: 'direct',
+    },
+    permissions: {
+      network: {
+        allow_all: false,
+        blocked_domains: ['*'],
+      },
     },
   } as CodexConfig,
 };
