@@ -50,7 +50,7 @@ const CodexFormComponent: React.FC<CodexFormProps> = ({
 
   React.useEffect(() => {
     if (defaultValues && !isInternalChangeRef.current) {
-      reset({ ...defaultCodexValues, ...defaultValues });
+      reset({ ...defaultCodexValues, ...defaultValues } as CodexFormData);
     }
     isInternalChangeRef.current = false;
   }, [defaultValues, reset]);
